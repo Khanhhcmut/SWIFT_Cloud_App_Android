@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/nenlogin"
+        android:layout_width="320dp"
+        android:layout_height="470dp"
+        android:background="@drawable/theme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="BK Cloud"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/nenlogin"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toTopOf="@+id/nenlogin" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Login"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/nenlogin"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/edtuser"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/loginbox"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutPass"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:endIconMode="password_toggle"
+        app:hintEnabled="false"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/edtuser">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtpass"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/loginbox"
+            android:inputType="textPassword"
+            android:hint="Password"
+            android:textSize="18sp"
+            android:paddingVertical="0dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <EditText
+        android:id="@+id/editproj"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/loginbox"
+        android:ems="10"
+        android:hint="Project Name"
+        android:inputType="text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/layoutPass" />
+
+    <Button
+        android:id="@+id/btnlogin"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/loginbtn"
+        android:text="Login"
+        android:textStyle="bold"
+        app:backgroundTint="@null"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/editproj" />
+
+    <Button
+        android:id="@+id/btnhelp"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/loginbtn"
+        android:text="Help"
+        android:textStyle="bold"
+        app:backgroundTint="@null"
+        app:layout_constraintEnd_toEndOf="@+id/nenlogin"
+        app:layout_constraintTop_toBottomOf="@+id/editproj" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupHelp"
+        android:layout_width="280dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/box"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/nenlogin"
+        app:layout_constraintStart_toStartOf="@+id/nenlogin"
+        app:layout_constraintTop_toTopOf="@+id/nenlogin">
+
+        <RadioButton
+            android:id="@+id/radio1"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="User manual"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radio2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Change Swift Auth URL"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txtPressAgain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Press Help again to exit"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

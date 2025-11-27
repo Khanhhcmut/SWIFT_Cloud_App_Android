@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_userinfo">
+        <item
+            android:id="@+id/nav_delete_user"
+            android:title="Delete User"
+            android:icon="@drawable/delete_icn"/>
+    </group>
+
+    <group android:id="@+id/group_main">
+        <item
+            android:id="@+id/nav_myfile"
+            android:title="My File"
+            android:icon="@drawable/myfile_icn"/>
+    </group>
+
+    <group android:id="@+id/group_system">
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout"
+            android:icon="@drawable/account_icn"/>
+    </group>
+
+</menu>
