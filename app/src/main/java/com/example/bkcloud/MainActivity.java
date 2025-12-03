@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
         edtSwiftURL.setText(savedURL);
         edtSwiftURL.setSelection(savedURL.length());
 
-        // Nếu có giá trị đã lưu thì hiển thị, nếu không thì hiện hint
         if (!savedURL.isEmpty()) {
             edtSwiftURL.setText(savedURL);
         }

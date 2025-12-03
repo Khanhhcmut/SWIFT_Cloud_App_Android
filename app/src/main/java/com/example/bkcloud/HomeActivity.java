@@ -19,11 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -246,6 +248,26 @@ public class HomeActivity extends AppCompatActivity {
 
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        LinearLayout btnDashboard = findViewById(R.id.btnDashboard);
+        LinearLayout btnBackup = findViewById(R.id.btnBackup);
+        FloatingActionButton fabCenter = findViewById(R.id.fabCenter);
+
+        btnDashboard.setOnClickListener(v -> {
+            Toast.makeText(this, "Open Dashboard", Toast.LENGTH_SHORT).show();
+
+        });
+
+        fabCenter.setOnClickListener(v -> {
+            Toast.makeText(this, "Main Action", Toast.LENGTH_SHORT).show();
+
+        });
+
+        btnBackup.setOnClickListener(v -> {
+            Toast.makeText(this, "Open Backup", Toast.LENGTH_SHORT).show();
+
+        });
+
     }
 
     @Override
