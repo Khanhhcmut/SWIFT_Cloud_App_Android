@@ -20,7 +20,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
     List<FolderItem> folders;
     List<FolderItem> originalList;
     OnFolderClick listener;
-    int selectedPosition = -1;
+    String selectedFolderName = null;
 
     public FolderAdapter(List<FolderItem> folders, OnFolderClick listener) {
         this.folders = folders;
@@ -54,18 +54,22 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         );
 
         holder.itemView.setOnClickListener(v -> {
-            selectedPosition = holder.getAdapterPosition();
+            if (item.name.equals(selectedFolderName)) {
+                selectedFolderName = null;
+                listener.onClick(null);
+            } else {
+                selectedFolderName = item.name;
+                listener.onClick(item.name);
+            }
             notifyDataSetChanged();
-            listener.onClick(item.name);
         });
 
-        if (holder.getAdapterPosition() == selectedPosition) {
+        if (item.name.equals(selectedFolderName)) {
             holder.itemView.setBackgroundResource(R.drawable.folder_selected_bg);
         } else {
             holder.itemView.setBackgroundResource(android.R.color.transparent);
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -110,5 +114,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    public void setSelectedFolder(String name) {
+        selectedFolderName = name;
+        notifyDataSetChanged();
+    }
 
 }

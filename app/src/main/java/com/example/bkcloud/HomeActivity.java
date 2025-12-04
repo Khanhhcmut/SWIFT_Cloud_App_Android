@@ -416,24 +416,21 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     runOnUiThread(() -> {
-                        folderAdapter = new FolderAdapter(folders, folderName -> {
-                            if (folderName.equals(currentSelectedFolder)) {
+                        folderAdapter = new FolderAdapter(folders, clickedName -> {
+                            if (clickedName == null) {
                                 currentSelectedFolder = null;
-
-                                folderAdapter.selectedPosition = -1;
-                                folderAdapter.notifyDataSetChanged();
-
-                                runOnUiThread(() -> {
-                                    fileAdapter = new FileAdapter(new ArrayList<>());
-                                    recyclerFiles.setAdapter(fileAdapter);
-                                });
-                                return;
+                                fileAdapter = new FileAdapter(new ArrayList<>());
+                                recyclerFiles.setAdapter(fileAdapter);
+                            } else {
+                                currentSelectedFolder = clickedName;
+                                loadFiles(clickedName);
+                                loadFolders();
                             }
-                            currentSelectedFolder = folderName;
-                            loadFiles(folderName);
                         });
                         recyclerFolders.setAdapter(folderAdapter);
+                        folderAdapter.setSelectedFolder(currentSelectedFolder);
                     });
+
                 }
 
             } catch (Exception e) {
