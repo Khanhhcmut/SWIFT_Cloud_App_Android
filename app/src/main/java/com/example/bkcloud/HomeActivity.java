@@ -1,8 +1,10 @@
 package com.example.bkcloud;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -83,6 +85,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                DrawerLayout drawer = findViewById(R.id.drawerLayout);
+
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    confirmLogout();
+                }
+            }
+        });
+
 
         if (android.os.Build.VERSION.SDK_INT < 33) {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2001);
@@ -380,6 +396,10 @@ public class HomeActivity extends AppCompatActivity {
                         folderAdapter = new FolderAdapter(folders, folderName -> {
                             if (folderName.equals(currentSelectedFolder)) {
                                 currentSelectedFolder = null;
+
+                                folderAdapter.selectedPosition = -1;
+                                folderAdapter.notifyDataSetChanged();
+
                                 runOnUiThread(() -> {
                                     fileAdapter = new FileAdapter(new ArrayList<>());
                                     recyclerFiles.setAdapter(fileAdapter);
