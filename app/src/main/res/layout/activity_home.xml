@@ -55,8 +55,8 @@
                 android:id="@+id/recyclerFolders"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:background="#EEEEEE"
-                android:padding="6dp" />
+                android:background="@drawable/item_card_bg"
+                android:padding="6dp"/>
 
             <!-- File label -->
             <TextView
@@ -74,8 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="#F5F5F5"
-                android:padding="6dp" />
+                android:background="@drawable/item_card_bg"
+                android:padding="6dp"/>
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"

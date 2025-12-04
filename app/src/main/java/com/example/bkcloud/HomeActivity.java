@@ -295,31 +295,54 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         fabCenter.setOnClickListener(v -> {
-            if (currentSelectedFolder == null) {
-                Toast.makeText(this, "Please select folder to upload", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             View view = getLayoutInflater().inflate(R.layout.dialog_upload_select, null);
             AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
+            TextView txtTitle = view.findViewById(R.id.txtTitle);
             Button btnUploadFile = view.findViewById(R.id.btnUploadFile);
             Button btnUploadFolder = view.findViewById(R.id.btnUploadFolder);
             Button btnCancel = view.findViewById(R.id.btnCancel);
 
-            btnUploadFile.setOnClickListener(x -> {
-                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                i.setType("*/*");
-                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(i, 1001);
-                dialog.dismiss();
-            });
+            if (currentSelectedFolder == null) {
 
-            btnUploadFolder.setOnClickListener(x -> {
-                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                startActivityForResult(i, 1002);
-                dialog.dismiss();
-            });
+                txtTitle.setText("Folder options");
+
+                btnUploadFile.setText("Create New Folder");
+                btnUploadFolder.setText("Upload Folder");
+
+                btnUploadFile.setOnClickListener(x -> {
+                    dialog.dismiss();
+                    showCreateFolderDialog();
+                });
+
+                btnUploadFolder.setOnClickListener(x -> {
+                    dialog.dismiss();
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    startActivityForResult(i, 1002);
+                });
+
+            } else {
+
+                txtTitle.setText("Upload options");
+
+                btnUploadFile.setText("Upload File");
+                btnUploadFolder.setText("Upload Folder");
+
+                btnUploadFile.setOnClickListener(x -> {
+                    dialog.dismiss();
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.setType("*/*");
+                    i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    startActivityForResult(i, 1001);
+                });
+
+                btnUploadFolder.setOnClickListener(x -> {
+                    dialog.dismiss();
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    startActivityForResult(i, 1002);
+                });
+            }
 
             btnCancel.setOnClickListener(x -> dialog.dismiss());
 
@@ -767,9 +790,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK || data == null) return;
-        if (currentSelectedFolder == null) return;
 
-        if (requestCode == 1001) {
+        if (requestCode == 1001) {  // Upload FILE vào folder đang chọn
+
+            if (currentSelectedFolder == null) {
+                Toast.makeText(this, "Please select folder to upload", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
@@ -787,20 +814,20 @@ public class HomeActivity extends AppCompatActivity {
                 uploadToSwift(currentSelectedFolder, data.getData());
             }
 
-        } else if (requestCode == 1002) {
+        } else if (requestCode == 1002) {  // Upload FOLDER
 
             Uri treeUri = data.getData();
+            if (treeUri == null) return;
 
             try {
                 getContentResolver().takePersistableUriPermission(
                         treeUri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
                 );
             } catch (Exception ignored) {}
 
             uploadDirectory(treeUri);
         }
-
     }
 
     private void uploadToSwift(String containerName, Uri fileUri) {
@@ -900,15 +927,37 @@ public class HomeActivity extends AppCompatActivity {
                 String rootName = dir.getName();
                 if (rootName == null) rootName = "";
 
+                boolean uploadToNewContainer = (currentSelectedFolder == null);
+
+                String containerName = uploadToNewContainer ? rootName : currentSelectedFolder;
+                String basePath = uploadToNewContainer ? "" : rootName;
+
+                if (uploadToNewContainer) {
+                    OkHttpClient client = new OkHttpClient();
+                    String url = storageUrl + "/" + containerName;
+
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .put(RequestBody.create(new byte[0], null))
+                            .addHeader("X-Auth-Token", token)
+                            .build();
+
+                    Response resp = client.newCall(request).execute();
+                    if (resp.code() != 201 && resp.code() != 202 && resp.code() != 204) {
+                        return;
+                    }
+                }
+
                 List<Pair<String, Uri>> files = new ArrayList<>();
-                collectFilesRecursively(dir, rootName, files);
+                collectFilesRecursively(dir, basePath, files);
 
                 int total = files.size();
 
                 if (total == 0) {
-                    runOnUiThread(() ->
-                            Toast.makeText(this, "Upload completed", Toast.LENGTH_SHORT).show()
-                    );
+                    runOnUiThread(() -> {
+                        loadFolders();
+                        Toast.makeText(this, "Upload completed", Toast.LENGTH_SHORT).show();
+                    });
                     return;
                 }
 
@@ -918,11 +967,13 @@ public class HomeActivity extends AppCompatActivity {
                     String objectPath = p.first;
                     Uri fileUri = p.second;
 
-                    uploadToSwiftWithCallback(currentSelectedFolder, fileUri, objectPath, () -> {
+                    uploadToSwiftWithCallback(containerName, fileUri, objectPath, () -> {
                         done[0]++;
                         if (done[0] == total) {
                             runOnUiThread(() -> {
-                                loadFiles(currentSelectedFolder);
+                                if (!uploadToNewContainer && currentSelectedFolder != null) {
+                                    loadFiles(currentSelectedFolder);
+                                }
                                 loadFolders();
                                 Toast.makeText(this, "Upload completed", Toast.LENGTH_SHORT).show();
                             });
@@ -981,6 +1032,75 @@ public class HomeActivity extends AppCompatActivity {
             finally {
                 try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
                 if (onDone != null) onDone.run();
+            }
+        }).start();
+    }
+
+    private void showCreateFolderDialog() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_create_folder, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+
+        EditText edtFolderName = view.findViewById(R.id.edtFolderName);
+        Button btnCreate = view.findViewById(R.id.btnCreate);
+        Button btnCancel = view.findViewById(R.id.btnCancel);
+
+        btnCreate.setOnClickListener(v -> {
+            String folderName = edtFolderName.getText().toString().trim();
+            if (folderName.isEmpty()) return;
+            dialog.dismiss();
+            createEmptyFolder(folderName);
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void createEmptyFolder(String folderName) {
+        new Thread(() -> {
+            try {
+                String url = storageUrl + "/" + folderName;
+
+                OkHttpClient client = new OkHttpClient();
+
+                Request headReq = new Request.Builder()
+                        .url(url)
+                        .head()
+                        .addHeader("X-Auth-Token", token)
+                        .build();
+
+                Response headResp = client.newCall(headReq).execute();
+                if (headResp.code() == 204) {
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "Folder already exists", Toast.LENGTH_SHORT).show()
+                    );
+                    return;
+                }
+
+                Request putReq = new Request.Builder()
+                        .url(url)
+                        .put(RequestBody.create(new byte[0], null))
+                        .addHeader("X-Auth-Token", token)
+                        .addHeader("Content-Length", "0")
+                        .build();
+
+                Response putResp = client.newCall(putReq).execute();
+
+                if (putResp.code() == 201 || putResp.code() == 202 || putResp.code() == 204) {
+                    runOnUiThread(() -> {
+                        loadFolders();
+                        Toast.makeText(this, "Folder created", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "Create folder failed: HTTP " + putResp.code(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+
+            } catch (Exception e) {
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Create folder error", Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }
