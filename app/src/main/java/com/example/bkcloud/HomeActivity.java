@@ -746,42 +746,6 @@ public class HomeActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void doSearch(String text) {
-        String key = stripAccent(text).toLowerCase();
-
-        if (key.isEmpty()) {
-
-            if (fileAdapter != null) {
-                fileAdapter = new FileAdapter(new ArrayList<>());
-                recyclerFiles.setAdapter(fileAdapter);
-            }
-
-            if (folderAdapter != null) {
-                folderAdapter.resetAll();
-            }
-
-        } else {
-
-            List<FileAdapter.FileItem> matchedFiles = new ArrayList<>();
-            Set<String> matchedFolders = new HashSet<>();
-
-            for (FileAdapter.FileItem f : allFiles) {
-                String nameNorm = stripAccent(f.name).toLowerCase();
-                if (nameNorm.contains(key)) {
-                    matchedFiles.add(f);
-                    matchedFolders.add(f.folder);
-                }
-            }
-
-            fileAdapter = new FileAdapter(matchedFiles);
-            recyclerFiles.setAdapter(fileAdapter);
-
-            if (folderAdapter != null) {
-                folderAdapter.filterByFolderSet(new ArrayList<>(matchedFolders));
-            }
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
