@@ -120,9 +120,52 @@
                                 android:textSize="12sp"/>
                         </LinearLayout>
 
+                        <!-- MY FILES -->
+                        <LinearLayout
+                            android:id="@+id/btnMyFiles"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/myfile_icn"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="My Files"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
                         <View
                             android:layout_width="80dp"
                             android:layout_height="1dp"/>
+
+                        <!-- REFRESH -->
+                        <LinearLayout
+                            android:id="@+id/btnRefresh"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/refresh_icn"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Refresh"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
 
                         <!-- BACKUP -->
                         <LinearLayout

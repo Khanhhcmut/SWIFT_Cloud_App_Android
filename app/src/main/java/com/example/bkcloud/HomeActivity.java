@@ -103,7 +103,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
         if (android.os.Build.VERSION.SDK_INT < 33) {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2001);
         }
@@ -298,6 +297,12 @@ public class HomeActivity extends AppCompatActivity {
 
         });
 
+        findViewById(R.id.btnMyFiles).setOnClickListener(v -> {
+            loadFolders();
+            if (currentSelectedFolder != null)
+                loadFiles(currentSelectedFolder);
+        });
+
         fabCenter.setOnClickListener(v -> {
 
             View view = getLayoutInflater().inflate(R.layout.dialog_upload_select, null);
@@ -353,9 +358,30 @@ public class HomeActivity extends AppCompatActivity {
             dialog.show();
         });
 
+        findViewById(R.id.btnRefresh).setOnClickListener(v -> {
+            currentSelectedFolder = null;
+            fileAdapter = new FileAdapter(new ArrayList<>());
+            fileAdapter.setListener(new FileAdapter.FileListener() {
+                @Override
+                public void onLongPress(String key) {
+                    HomeActivity.this.onItemLongPress(key);
+                }
+                @Override
+                public void onToggleSelect(String key) {
+                    HomeActivity.this.onItemToggle(key);
+                }
+                @Override
+                public void onClickDeleteIcon() {
+                    HomeActivity.this.onDeleteIconClick();
+                }
+            });
+            recyclerFiles.setAdapter(fileAdapter);
+            loadFolders();
+            Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
+        });
+
         btnBackup.setOnClickListener(v -> {
             Toast.makeText(this, "Open Backup", Toast.LENGTH_SHORT).show();
-
         });
 
     }
@@ -428,7 +454,6 @@ public class HomeActivity extends AppCompatActivity {
                             } else {
                                 currentSelectedFolder = clickedName;
                                 loadFiles(clickedName);
-                                loadFolders();
                             }
                         });
                         recyclerFolders.setAdapter(folderAdapter);
