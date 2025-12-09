@@ -466,7 +466,8 @@ public class HomeActivity extends AppCompatActivity {
                         String name = obj.getString("name");
                         long size = obj.getLong("bytes");
 
-                        files.add(new FileAdapter.FileItem(name, size, containerName));
+                        String last = obj.optString("last_modified", "");
+                        files.add(new FileAdapter.FileItem(name, size, containerName, last));
                     }
 
                     runOnUiThread(() -> {
@@ -738,8 +739,9 @@ public class HomeActivity extends AppCompatActivity {
                         JSONObject obj = arr.getJSONObject(i);
                         String name = obj.getString("name");
                         long size = obj.getLong("bytes");
+                        String last = obj.optString("last_modified", "");
 
-                        allFiles.add(new FileAdapter.FileItem(name, size, containerName));
+                        allFiles.add(new FileAdapter.FileItem(name, size, containerName, last));
                     }
                 }
 

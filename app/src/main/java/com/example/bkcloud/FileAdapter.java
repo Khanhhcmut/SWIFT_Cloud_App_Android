@@ -8,8 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
@@ -20,14 +23,16 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         public String name;
         public long size;
         public String folder;
+        public String last;
 
-        public FileItem(String name, long size, String folder) {
+        public FileItem(String name, long size, String folder, String last) {
             this.name = name;
             this.size = size;
             this.folder = folder;
+            this.last = last;
         }
-    }
 
+    }
 
     public FileAdapter(List<FileItem> files) {
         this.files = files;
@@ -56,7 +61,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull FileAdapter.ViewHolder holder, int position) {
         FileItem file = files.get(position);
         holder.txtFileName.setText(file.name);
-        holder.txtFileSize.setText(formatSize(file.size));
+        holder.txtFileSize.setText(
+                formatSize(file.size) + " • " + formatLastModified(file.last)
+        );
     }
 
     @Override
@@ -88,26 +95,25 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public List<String> getVisibleFolders() {
-        List<String> result = new ArrayList<>();
-        for (FileItem f : files) {
-            if (!result.contains(f.folder)) {
-                result.add(f.folder);
-            }
-        }
-        return result;
-    }
-
     private String stripAccent(String s) {
         if (s == null) return "";
         String temp = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD);
         return temp.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
-    public void setData(List<FileItem> newData) {
-        files.clear();
-        files.addAll(newData);
-        notifyDataSetChanged();
+    private String formatLastModified(String raw) {
+        try {
+            // Swift format: 2024-05-03T14:22:31.123456
+            String clean = raw.split("\\.")[0]; // bỏ phần .123456
+            SimpleDateFormat src = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            Date d = src.parse(clean);
+
+            SimpleDateFormat out = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US);
+            return out.format(d);
+
+        } catch (Exception e) {
+            return raw;
+        }
     }
 
 
