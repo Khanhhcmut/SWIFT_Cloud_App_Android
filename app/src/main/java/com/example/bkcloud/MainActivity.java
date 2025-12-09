@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radio1) {
                     Intent help = new Intent(MainActivity.this, HelpActivity.class);
+                    help.putExtra("open_manual", true);
                     startActivity(help);
 
                     radioGroupHelp.clearCheck();
@@ -110,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
         });
-
-
+        
     }
 
     private void showSwiftURLDialog() {
