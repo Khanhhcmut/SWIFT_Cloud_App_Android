@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
     <LinearLayout
@@ -47,6 +48,20 @@
             android:text="2. Giao diện chính\n\n- Gồm 2 phần chính: menu bên trái và nội dung bên phải."
             android:textSize="16sp"
             android:paddingTop="10dp" />
+
+
+        <!-- EXIT BUTTON -->
+        <Button
+            android:id="@+id/btnExitManual"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/loginbtn"
+            app:backgroundTint="@null"
+            android:text="Exit"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>

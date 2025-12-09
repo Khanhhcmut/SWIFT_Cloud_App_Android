@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/rec_box"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help Menu"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp" />
+
+    <!-- BUTTON 1 -->
+    <Button
+        android:id="@+id/btnHelp1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/loginbtn"
+        app:backgroundTint="@null"
+        android:text="User Manual"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- BUTTON 2 -->
+    <Button
+        android:id="@+id/btnHelp2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/loginbtn"
+        app:backgroundTint="@null"
+        android:text="Help Item 2"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- BUTTON 3 -->
+    <Button
+        android:id="@+id/btnHelp3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/loginbtn"
+        app:backgroundTint="@null"
+        android:text="Help Item 3"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- EXIT BUTTON -->
+    <Button
+        android:id="@+id/btnExitHelp"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:background="@drawable/loginbtn"
+        app:backgroundTint="@null"
+        android:text="Exit"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
