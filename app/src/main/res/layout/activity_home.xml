@@ -39,16 +39,28 @@
                 android:drawableEnd="@drawable/close_icn"
                 android:drawablePadding="8dp" />
 
-
-
             <!-- Folder label -->
-            <TextView
-                android:text="Folders"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/lblFolders"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Folders"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btnSortFolders"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/sort_icn"
+                    android:padding="4dp"/>
+            </RelativeLayout>
 
             <!-- Folder list -->
             <androidx.recyclerview.widget.RecyclerView
@@ -59,14 +71,28 @@
                 android:padding="6dp"/>
 
             <!-- File label -->
-            <TextView
-                android:text="Files"
-                android:textSize="18sp"
-                android:textStyle="bold"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/lblFiles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Files"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btnSortFiles"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/sort_icn"
+                    android:padding="4dp"/>
+            </RelativeLayout>
 
             <!-- File list -->
             <androidx.recyclerview.widget.RecyclerView
@@ -204,7 +230,6 @@
                     app:elevation="12dp"/>
 
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
         </LinearLayout>
 
