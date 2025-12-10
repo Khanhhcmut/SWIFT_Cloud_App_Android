@@ -51,12 +51,14 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtFileName, txtFileSize;
         ImageView deleteIcon;
+        ImageView checkIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtFileName = itemView.findViewById(R.id.txtFileName);
             txtFileSize = itemView.findViewById(R.id.txtFileSize);
             deleteIcon = itemView.findViewById(R.id.deleteIcon);
+            checkIcon = itemView.findViewById(R.id.checkIcon);
         }
     }
 
@@ -91,28 +93,20 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
                     handler.postDelayed(() -> {
                         isLong = true;
                         if (listener != null) listener.onLongPress(key);
-                    }, 1000);
+                    }, 1500);
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_UP ||
                         event.getAction() == MotionEvent.ACTION_CANCEL) {
 
                     handler.removeCallbacksAndMessages(null);
-
-                    if (deleteMode && !isLong) {
-                        if (listener != null) listener.onToggleSelect(key);
-                    }
                 }
 
                 return false;
             }
         });
 
-        holder.itemView.setOnClickListener(v -> {
-            if (deleteMode) {
-                if (listener != null) listener.onToggleSelect(key);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> {});
 
         holder.deleteIcon.setOnClickListener(v -> {
             if (listener != null) listener.onClickDeleteIcon();
@@ -124,6 +118,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
         if (deleteMode) {
             holder.deleteIcon.setVisibility(View.VISIBLE);
+            holder.checkIcon.setVisibility(View.VISIBLE);
+
+            holder.checkIcon.setOnClickListener(v -> {
+                if (listener != null) listener.onToggleSelect(key);
+            });
 
             if (selectedSet.contains(key)) {
                 holder.itemView.setBackgroundColor(Color.parseColor("#33FF0000"));
@@ -132,6 +131,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
             }
 
         } else {
+            holder.checkIcon.setVisibility(View.GONE);
             holder.deleteIcon.setVisibility(View.GONE);
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }

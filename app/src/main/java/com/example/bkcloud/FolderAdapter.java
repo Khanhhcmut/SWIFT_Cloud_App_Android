@@ -89,7 +89,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                     handler.postDelayed(() -> {
                         isLong = true;
                         if (deleteListener != null) deleteListener.onLongPress(key);
-                    }, 1000);
+                    }, 1500);
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_UP ||
