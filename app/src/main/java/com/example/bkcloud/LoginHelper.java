@@ -67,7 +67,10 @@ public class LoginHelper {
                 if (response.code() == 201) {
                     String token = response.header("X-Subject-Token");
                     String respBody = response.body().string();
-
+                    if (!respBody.contains("token")) {
+                        ((android.app.Activity) ctx).runOnUiThread(() -> callback.onError("Invalid project or user data"));
+                        return;
+                    }
                     JSONObject root = new JSONObject(respBody).getJSONObject("token");
 
                     String userId = root.getJSONObject("user").getString("id");
@@ -100,13 +103,13 @@ public class LoginHelper {
                     callback.onSuccess(token, finalStorageUrl, userId, projectId);
 
                 } else if (response.code() == 401) {
-                    callback.onError("Wrong username or password");
+                    ((android.app.Activity) ctx).runOnUiThread(() -> callback.onError("Wrong username, password or project name"));
                 } else {
-                    callback.onError("Login error: " + response.code());
+                    ((android.app.Activity) ctx).runOnUiThread(() -> callback.onError("Login error: " + response.code()));
                 }
 
             } catch (Exception e) {
-                callback.onError("Connection error: " + e.getMessage());
+                ((android.app.Activity) ctx).runOnUiThread(() -> callback.onError("Connection error: " + e.getMessage()));
             }
         }).start();
     }
