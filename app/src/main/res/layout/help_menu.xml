@@ -35,7 +35,7 @@
         android:layout_height="50dp"
         android:background="@drawable/loginbtn"
         app:backgroundTint="@null"
-        android:text="Help Item 2"
+        android:text="Change User Password"
         android:textColor="#FFFFFF"
         android:textSize="15sp"
         android:layout_marginBottom="10dp"/>

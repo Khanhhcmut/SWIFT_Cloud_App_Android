@@ -108,6 +108,27 @@ public class UserManager {
         return deleted;
     }
 
+    public static void updatePassword(
+            Context ctx,
+            String username,
+            String project,
+            String newPassword
+    ) {
+        List<UserItem> users = loadUsers(ctx);
+        boolean updated = false;
 
+        for (UserItem u : users) {
+            if (u.username.equals(username) &&
+                    u.project.equals(project)) {
+                u.password = newPassword;
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            saveList(ctx, users);
+        }
+    }
 
 }
