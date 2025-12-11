@@ -104,8 +104,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         });
 
         holder.itemView.setOnClickListener(v -> {
-            if (deleteMode) return;
-
             if (item.name.equals(selectedFolderName)) {
                 selectedFolderName = null;
                 if (listener != null) listener.onClick(null);

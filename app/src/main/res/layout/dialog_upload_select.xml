@@ -36,6 +36,15 @@
         android:layout_marginTop="12dp" />
 
     <Button
+        android:id="@+id/btnDownload"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Download"
+        android:background="@drawable/loginbtn"
+        app:backgroundTint="@null"
+        android:layout_marginTop="12dp"/>
+
+    <Button
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
         android:layout_height="50dp"

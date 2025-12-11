@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -362,11 +363,11 @@ public class HomeActivity extends AppCompatActivity {
             Button btnUploadFile = view.findViewById(R.id.btnUploadFile);
             Button btnUploadFolder = view.findViewById(R.id.btnUploadFolder);
             Button btnCancel = view.findViewById(R.id.btnCancel);
+            Button btnDownload = view.findViewById(R.id.btnDownload);
 
             if (currentSelectedFolder == null) {
 
                 txtTitle.setText("Folder options");
-
                 btnUploadFile.setText("Create New Folder");
                 btnUploadFolder.setText("Upload Folder");
 
@@ -379,6 +380,11 @@ public class HomeActivity extends AppCompatActivity {
                     dialog.dismiss();
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                     startActivityForResult(i, 1002);
+                });
+
+                btnDownload.setOnClickListener(x -> {
+                    dialog.dismiss();
+                    handleDownloadRequest();
                 });
 
             } else {
@@ -1060,7 +1066,19 @@ public class HomeActivity extends AppCompatActivity {
             } catch (Exception ignored) {}
 
             uploadDirectory(treeUri);
+        } else if (requestCode == 9001) {
+            Uri tree = data.getData();
+            if (tree == null) return;
+
+            getContentResolver().takePersistableUriPermission(
+                    tree,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
+
+            startBatchDownload(tree);
         }
+
     }
 
     private void uploadToSwift(String container, Uri uri, String objectName, Runnable onDone) {
@@ -1415,6 +1433,99 @@ public class HomeActivity extends AppCompatActivity {
                 "Sort: Type ↓"
         };
         Toast.makeText(this, msgs[mode], Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleDownloadRequest() {
+        if (!deleteMode || selectedDeleteItems.isEmpty()) {
+            Toast.makeText(this, "No items selected!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        startActivityForResult(intent, 9001);
+    }
+
+    private void startBatchDownload(Uri targetDirUri) {
+        new Thread(() -> {
+            DocumentFile root = DocumentFile.fromTreeUri(this, targetDirUri);
+            if (root == null) return;
+
+            OkHttpClient client = new OkHttpClient();
+
+            for (String key : selectedDeleteItems) {
+                try {
+                    if (key.contains("/")) {
+
+                        String folder = key.substring(0, key.indexOf("/"));
+                        String name = key.substring(key.indexOf("/") + 1);
+
+                        downloadSingleFile(client, root, folder, name);
+
+                    } else {
+
+                        downloadFolder(client, root, key);
+                    }
+
+                } catch (Exception ignored) {}
+            }
+
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Download complete", Toast.LENGTH_SHORT).show();
+            });
+
+        }).start();
+    }
+
+    private void downloadSingleFile(OkHttpClient client, DocumentFile root, String folder, String name) {
+        try {
+            String url = storageUrl + "/" + folder + "/" + name;
+
+            Request req = new Request.Builder()
+                    .url(url)
+                    .addHeader("X-Auth-Token", token)
+                    .get()
+                    .build();
+
+            Response resp = client.newCall(req).execute();
+            byte[] data = resp.body().bytes();
+
+            DocumentFile out = root.createFile("*/*", name);
+            if (out == null) return;
+
+            try (OutputStream os = getContentResolver().openOutputStream(out.getUri())) {
+                os.write(data);
+            }
+
+        } catch (Exception ignored) {}
+    }
+
+    private void downloadFolder(OkHttpClient client, DocumentFile root, String folderName) {
+        try {
+            DocumentFile localFolder = root.findFile(folderName);
+            if (localFolder == null) {
+                localFolder = root.createDirectory(folderName);
+            }
+            if (localFolder == null) return;
+
+            String url = storageUrl + "/" + folderName + "?format=json";
+
+            Request req = new Request.Builder()
+                    .url(url)
+                    .addHeader("X-Auth-Token", token)
+                    .get()
+                    .build();
+
+            Response resp = client.newCall(req).execute();
+            JSONArray arr = new JSONArray(resp.body().string());
+
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String fname = obj.getString("name");
+
+                downloadSingleFile(client, localFolder, folderName, fname);
+            }
+
+        } catch (Exception ignored) {}
     }
 
 }
