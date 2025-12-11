@@ -91,7 +91,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                     handler.postDelayed(() -> {
                         isLong = true;
                         if (deleteListener != null) deleteListener.onLongPress(key);
-                    }, 1500);
+                    }, 1000);
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_UP ||
@@ -104,6 +104,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         });
 
         holder.itemView.setOnClickListener(v -> {
+            if (deleteMode) return;
+
             if (item.name.equals(selectedFolderName)) {
                 selectedFolderName = null;
                 if (listener != null) listener.onClick(null);
