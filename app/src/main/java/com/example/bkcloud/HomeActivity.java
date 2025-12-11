@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
@@ -59,6 +60,8 @@ import android.util.Pair;
 
 public class HomeActivity extends AppCompatActivity {
 
+    int folderSortMode = 0;
+    int fileSortMode = 0;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle toggle;
@@ -83,6 +86,8 @@ public class HomeActivity extends AppCompatActivity {
     boolean batchUploadMode = false;
     boolean deleteMode = false;
     Set<String> selectedDeleteItems = new HashSet<>();
+    List<FolderAdapter.FolderItem> currentFoldersList = new ArrayList<>();
+    List<FileAdapter.FileItem> currentFileList = new ArrayList<>();
 
 
     @Override
@@ -259,11 +264,19 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
-
-
-
         recyclerFolders = findViewById(R.id.recyclerFolders);
+        findViewById(R.id.btnSortFolders).setOnClickListener(v -> {
+            folderSortMode = (folderSortMode + 1) % 6;
+            applyFolderSort();
+            showSortToast(folderSortMode);
+        });
+
         recyclerFiles = findViewById(R.id.recyclerFiles);
+        findViewById(R.id.btnSortFiles).setOnClickListener(v -> {
+            fileSortMode = (fileSortMode + 1) % 6;
+            applyFileSort();
+            showSortToast(fileSortMode);
+        });
 
         recyclerFolders.setLayoutManager(new LinearLayoutManager(this));
         recyclerFiles.setLayoutManager(new LinearLayoutManager(this));
@@ -449,6 +462,7 @@ public class HomeActivity extends AppCompatActivity {
                     String[] lines = body.split("\n");
 
                     List<FolderAdapter.FolderItem> folders = new ArrayList<>();
+                    currentFoldersList = folders;
 
                     for (String line : lines) {
                         String container = line.trim();
@@ -493,6 +507,8 @@ public class HomeActivity extends AppCompatActivity {
                                 loadFiles(clickedName);
                             }
                         });
+
+                        applyFolderSort();
                         recyclerFolders.setAdapter(folderAdapter);
                         folderAdapter.setSelectedFolder(currentSelectedFolder);
 
@@ -542,6 +558,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     JSONArray arr = new JSONArray(json);
                     List<FileAdapter.FileItem> files = new ArrayList<>();
+                    currentFileList = files;
 
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
@@ -554,6 +571,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         fileAdapter = new FileAdapter(files);
+                        applyFileSort();
                         recyclerFiles.setAdapter(fileAdapter);
 
                         fileAdapter.setListener(new FileAdapter.FileListener() {
@@ -1317,6 +1335,86 @@ public class HomeActivity extends AppCompatActivity {
                 );
             }
         }).start();
+    }
+
+    private void applyFolderSort() {
+        List<FolderAdapter.FolderItem> list = currentFoldersList;
+        switch (folderSortMode) {
+            case 0:
+                Collections.sort(list, (a, b) -> a.name.compareToIgnoreCase(b.name));
+                break;
+            case 1:
+                Collections.sort(list, (a, b) -> b.name.compareToIgnoreCase(a.name));
+                break;
+            case 2:
+                Collections.sort(list, (a, b) -> Long.compare(a.size, b.size));
+                break;
+            case 3:
+                Collections.sort(list, (a, b) -> Long.compare(b.size, a.size));
+                break;
+            case 4:
+                Collections.sort(list, (a, b) -> a.name.split("\\.").length > 1
+                        && b.name.split("\\.").length > 1
+                        ? a.name.substring(a.name.lastIndexOf("."))
+                        .compareToIgnoreCase(
+                                b.name.substring(b.name.lastIndexOf(".")))
+                        : 0);
+                break;
+            case 5:
+                Collections.sort(list, (a, b) -> b.name.split("\\.").length > 1
+                        && a.name.split("\\.").length > 1
+                        ? b.name.substring(b.name.lastIndexOf("."))
+                        .compareToIgnoreCase(
+                                a.name.substring(a.name.lastIndexOf(".")))
+                        : 0);
+                break;
+        }
+        folderAdapter.notifyDataSetChanged();
+    }
+
+    private void applyFileSort() {
+        List<FileAdapter.FileItem> list = currentFileList;
+        switch (fileSortMode) {
+            case 0:
+                Collections.sort(list, (a, b) -> a.name.compareToIgnoreCase(b.name));
+                break;
+            case 1:
+                Collections.sort(list, (a, b) -> b.name.compareToIgnoreCase(a.name));
+                break;
+            case 2:
+                Collections.sort(list, (a, b) -> Long.compare(a.size, b.size));
+                break;
+            case 3:
+                Collections.sort(list, (a, b) -> Long.compare(b.size, a.size));
+                break;
+            case 4:
+                Collections.sort(list, (a, b) -> {
+                    String extA = a.name.contains(".") ? a.name.substring(a.name.lastIndexOf(".")) : "";
+                    String extB = b.name.contains(".") ? b.name.substring(b.name.lastIndexOf(".")) : "";
+                    return extA.compareToIgnoreCase(extB);
+                });
+                break;
+            case 5:
+                Collections.sort(list, (a, b) -> {
+                    String extA = a.name.contains(".") ? a.name.substring(a.name.lastIndexOf(".")) : "";
+                    String extB = b.name.contains(".") ? b.name.substring(b.name.lastIndexOf(".")) : "";
+                    return extB.compareToIgnoreCase(extA);
+                });
+                break;
+        }
+        fileAdapter.notifyDataSetChanged();
+    }
+
+    private void showSortToast(int mode) {
+        String[] msgs = {
+                "Sort: Name ↑",
+                "Sort: Name ↓",
+                "Sort: Size ↑",
+                "Sort: Size ↓",
+                "Sort: Type ↑",
+                "Sort: Type ↓"
+        };
+        Toast.makeText(this, msgs[mode], Toast.LENGTH_SHORT).show();
     }
 
 }
