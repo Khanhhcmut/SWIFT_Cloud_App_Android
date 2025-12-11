@@ -363,7 +363,6 @@ public class HomeActivity extends AppCompatActivity {
             Button btnUploadFile = view.findViewById(R.id.btnUploadFile);
             Button btnUploadFolder = view.findViewById(R.id.btnUploadFolder);
             Button btnCancel = view.findViewById(R.id.btnCancel);
-            Button btnDownload = view.findViewById(R.id.btnDownload);
 
             if (currentSelectedFolder == null) {
 
@@ -646,7 +645,7 @@ public class HomeActivity extends AppCompatActivity {
             dialog.dismiss();
 
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            startActivityForResult(intent, 9001);   // dùng hệ thống download sẵn có
+            startActivityForResult(intent, 9001);
         });
 
         btnDelete.setOnClickListener(v -> {
