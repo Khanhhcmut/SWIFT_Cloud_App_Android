@@ -97,7 +97,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerFolders"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="120dp"
                 android:background="@drawable/item_card_bg"
                 android:padding="6dp"/>
 
