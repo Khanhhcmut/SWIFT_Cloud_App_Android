@@ -32,7 +32,7 @@
         android:layout_height="24dp"
         android:layout_alignParentRight="true"
         android:layout_marginTop="2dp"
-        android:src="@drawable/delete_icn"
+        android:src="@drawable/choice_icn"
         android:visibility="gone" />
 
     <TextView

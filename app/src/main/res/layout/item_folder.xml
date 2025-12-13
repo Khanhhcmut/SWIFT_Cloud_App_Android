@@ -30,7 +30,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/delete_icn"
+        android:src="@drawable/choice_icn"
         android:visibility="gone" />
 
 </RelativeLayout>
