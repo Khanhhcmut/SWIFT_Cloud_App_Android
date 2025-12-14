@@ -18,31 +18,50 @@
             android:textSize="30sp"
             android:gravity="center"
             android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="50dp" />
+            android:layout_gravity="center_horizontal" />
 
         <TextView
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1. Đăng nhập vào app"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:paddingTop="10dp" />
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:src="@drawable/pic1" />
 
         <TextView
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="- Nhập Username, Password và Project name để đăng nhập.\n- Nếu thiếu thông tin sẽ báo lỗi."
+            android:text="- Người dùng cần nhập Username, Password và Project name để đăng nhập.\n- Nếu thiếu thông tin sẽ báo lỗi."
             android:textSize="16sp"
             android:lineSpacingExtra="5dp"
-            android:paddingTop="10dp" />
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:src="@drawable/pic2" />
 
         <TextView
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2. Giao diện chính\n\n- Gồm 2 phần chính: menu bên trái và nội dung bên phải."
+            android:text="- Người dùng cần nhập Username, Password và Project name để đăng nhập.\n- Nếu thiếu thông tin sẽ báo lỗi."
             android:textSize="16sp"
-            android:paddingTop="10dp" />
+            android:lineSpacingExtra="5dp"
+            />
+
+
 
 
         <!-- EXIT BUTTON -->
