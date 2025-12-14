@@ -1914,7 +1914,7 @@ public class HomeActivity extends AppCompatActivity {
         page.animate()
                 .alpha(1f)
                 .translationX(0f)
-                .setDuration(200)
+                .setDuration(400)
                 .start();
 
         if (page == layoutDashboard) {
