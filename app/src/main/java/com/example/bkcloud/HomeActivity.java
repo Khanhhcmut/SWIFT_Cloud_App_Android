@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +70,14 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TimePicker;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -443,6 +453,50 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         loadCloudQuotaFromConfig();
+
+        if (getIntent().getBooleanExtra("backup_trigger", false)) {
+            showBackupConfirmDialog();
+        }
+
+        btnSetBackupTime.setOnClickListener(v -> {
+            showBackupTimeDialog();
+        });
+
+        btnChooseBackupFolder.setOnClickListener(v -> {
+            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(i, 3001);
+        });
+
+        btnBackupNow.setOnClickListener(v -> {
+            showBackupConfirmDialog();
+        });
+
+        btnClearBackup.setOnClickListener(v -> {
+
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog_clear_backup);
+            dialog.setCancelable(true);
+
+            dialog.findViewById(R.id.btnCancel)
+                    .setOnClickListener(x -> dialog.dismiss());
+
+            dialog.findViewById(R.id.btnOk)
+                    .setOnClickListener(x -> {
+                        BackupManager.clear(this);
+                        dialog.dismiss();
+                        Toast.makeText(this, "Backup settings cleared", Toast.LENGTH_SHORT).show();
+                        txtBackupStatus.setText(
+                                BackupManager.getStatusText(this)
+                        );
+                    });
+
+            dialog.show();
+        });
+
+        txtBackupStatus.setText(
+                BackupManager.getStatusText(this)
+        );
+
     }
 
     @Override
@@ -1040,7 +1094,7 @@ public class HomeActivity extends AppCompatActivity {
 
         if (resultCode != RESULT_OK || data == null) return;
 
-        if (requestCode == 1001) {  // Upload FILE vào folder đang chọn
+        if (requestCode == 1001) {
 
             if (currentSelectedFolder == null) {
                 Toast.makeText(this, "Please select folder to upload", Toast.LENGTH_SHORT).show();
@@ -1133,8 +1187,53 @@ public class HomeActivity extends AppCompatActivity {
             );
 
             startBatchDownload(tree);
-        }
+        } else if (requestCode == 3001) {
+            Uri treeUri = data.getData();
+            if (treeUri == null) return;
 
+            getContentResolver().takePersistableUriPermission(
+                    treeUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
+
+            List<String> folders = BackupManager.getFolders(this);
+
+            androidx.documentfile.provider.DocumentFile newDf =
+                    androidx.documentfile.provider.DocumentFile.fromTreeUri(this, treeUri);
+
+            if (newDf != null && newDf.getName() != null) {
+
+                boolean exists = false;
+
+                String newId = android.provider.DocumentsContract.getTreeDocumentId(treeUri);
+
+                for (String u : folders) {
+                    Uri oldUri = Uri.parse(u);
+                    DocumentFile oldDf = DocumentFile.fromTreeUri(this, oldUri);
+
+                    if (oldDf != null) {
+                        String oldId =
+                                android.provider.DocumentsContract.getTreeDocumentId(oldUri);
+
+                        if (oldId.equals(newId)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!exists) {
+                    folders.add(treeUri.toString());
+                    BackupManager.setFolders(this, folders);
+                }
+            }
+
+            BackupManager.setEnabled(this, true);
+
+            txtBackupStatus.setText(
+                    BackupManager.getStatusText(this)
+            );
+        }
     }
 
     private void uploadToSwift(String container, Uri uri, String objectName, Runnable onDone) {
@@ -1767,7 +1866,7 @@ public class HomeActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void doRefresh(boolean showToast) {
+    public void doRefresh(boolean showToast) {
         currentSelectedFolder = null;
 
         fileAdapter = new FileAdapter(new ArrayList<>());
@@ -1930,6 +2029,177 @@ public class HomeActivity extends AppCompatActivity {
             recyclerFolders.postDelayed(this::updateDashboardStats, 300);
         }
     }
+
+    private void showBackupConfirmDialog() {
+
+        android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_backup_confirm);
+        dialog.setCancelable(true);
+
+        dialog.findViewById(R.id.btnCancel)
+                .setOnClickListener(v -> dialog.dismiss());
+
+        dialog.findViewById(R.id.btnOk)
+                .setOnClickListener(v -> {
+                    dialog.dismiss();
+                    BackupManager.startBackup(HomeActivity.this);
+                });
+
+        dialog.show();
+    }
+
+    private void showBackupTimeDialog() {
+
+        final int[] selYear = {0};
+        final int[] selMonth = {0};
+        final int[] selDay = {0};
+
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_backup_time);
+        dialog.setCancelable(true);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            dialog.getWindow().setGravity(Gravity.CENTER);
+        }
+
+        RadioGroup rgMode = dialog.findViewById(R.id.rgMode);
+        RadioButton rbDaily = dialog.findViewById(R.id.rbDaily);
+        RadioButton rbWeekly = dialog.findViewById(R.id.rbWeekly);
+        RadioButton rbSpecific = dialog.findViewById(R.id.rbSpecific);
+
+        TimePicker timePicker = dialog.findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
+        LinearLayout layoutWeekdays = dialog.findViewById(R.id.layoutWeekdays);
+        TextView txtSpecificDate = dialog.findViewById(R.id.txtSpecificDate);
+
+        CheckBox cbMon = dialog.findViewById(R.id.cbMon);
+        CheckBox cbTue = dialog.findViewById(R.id.cbTue);
+        CheckBox cbWed = dialog.findViewById(R.id.cbWed);
+        CheckBox cbThu = dialog.findViewById(R.id.cbThu);
+        CheckBox cbFri = dialog.findViewById(R.id.cbFri);
+        CheckBox cbSat = dialog.findViewById(R.id.cbSat);
+        CheckBox cbSun = dialog.findViewById(R.id.cbSun);
+
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnOk = dialog.findViewById(R.id.btnOk);
+
+        rbDaily.setChecked(true);
+
+        txtSpecificDate.setOnClickListener(v -> {
+
+            Calendar c = Calendar.getInstance();
+
+            DatePickerDialog dp = new DatePickerDialog(
+                    this,
+                    (view, year, month, dayOfMonth) -> {
+
+                        selYear[0] = year;
+                        selMonth[0] = month + 1;
+                        selDay[0] = dayOfMonth;
+
+                        txtSpecificDate.setText(
+                                String.format(
+                                        "%04d-%02d-%02d",
+                                        selYear[0], selMonth[0], selDay[0]
+                                )
+                        );
+                    },
+                    c.get(Calendar.YEAR),
+                    c.get(Calendar.MONTH),
+                    c.get(Calendar.DAY_OF_MONTH)
+            );
+
+            dp.show();
+        });
+
+        rgMode.setOnCheckedChangeListener((g, id) -> {
+            layoutWeekdays.setVisibility(
+                    id == R.id.rbWeekly ? View.VISIBLE : View.GONE
+            );
+            txtSpecificDate.setVisibility(
+                    id == R.id.rbSpecific ? View.VISIBLE : View.GONE
+            );
+
+            if (id != R.id.rbSpecific) {
+                selYear[0] = 0;
+                selMonth[0] = 0;
+                selDay[0] = 0;
+                txtSpecificDate.setText("Select date");
+            }
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnOk.setOnClickListener(v -> {
+
+            int hour = timePicker.getHour();
+            int minute = timePicker.getMinute();
+            String time = String.format("%02d:%02d", hour, minute);
+
+            BackupManager.setTime(this, time);
+            BackupManager.setEnabled(this, true);
+
+            if (rbDaily.isChecked()) {
+                BackupManager.setMode(this, "DAILY");
+            }
+
+            if (rbWeekly.isChecked()) {
+                BackupManager.setMode(this, "WEEKLY");
+
+                List<Integer> days = new ArrayList<>();
+                if (cbMon.isChecked()) days.add(Calendar.MONDAY);
+                if (cbTue.isChecked()) days.add(Calendar.TUESDAY);
+                if (cbWed.isChecked()) days.add(Calendar.WEDNESDAY);
+                if (cbThu.isChecked()) days.add(Calendar.THURSDAY);
+                if (cbFri.isChecked()) days.add(Calendar.FRIDAY);
+                if (cbSat.isChecked()) days.add(Calendar.SATURDAY);
+                if (cbSun.isChecked()) days.add(Calendar.SUNDAY);
+
+                if (days.isEmpty()) {
+                    Toast.makeText(
+                            this,
+                            "Please select at least one weekday",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    return;
+                }
+
+                BackupManager.setWeekdays(this, days);
+            }
+
+            if (rbSpecific.isChecked()) {
+
+                if (selYear[0] == 0) {
+                    Toast.makeText(
+                            this,
+                            "Please select a date",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    return;
+                }
+
+                BackupManager.setMode(this, "SPECIFIC_DAY");
+
+                String date = String.format(
+                        "%04d-%02d-%02d",
+                        selYear[0], selMonth[0], selDay[0]
+                );
+                BackupManager.setSpecificDate(this, date);
+            }
+
+            BackupManager.schedule(this);
+            txtBackupStatus.setText(BackupManager.getStatusText(this));
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
 
 }
 
