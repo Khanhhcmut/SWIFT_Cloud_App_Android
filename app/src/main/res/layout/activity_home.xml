@@ -27,137 +27,164 @@
             android:layout_weight="1">
 
             <!-- DASHBOARD -->
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp"
+                android:fillViewport="true"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dashboard"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"/>
-
-                <GridLayout
-                    android:id="@+id/dashboardGrid"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:rowCount="3"
-                    android:useDefaultMargins="true">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="120dp"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/item_card_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dashboard"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/docs_icn"/>
+                    <GridLayout
+                        android:id="@+id/dashboardGrid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="2"
+                        android:rowCount="3"
+                        android:useDefaultMargins="true">
 
-                        <TextView
-                            android:id="@+id/txtDocCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Documents"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="120dp"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/item_card_bg">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="120dp"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/item_card_bg">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/docs_icn"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/image_icn"/>
+                            <TextView
+                                android:id="@+id/txtDocCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Documents"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtImageCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Images"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="120dp"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/item_card_bg">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="120dp"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/item_card_bg">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/image_icn"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/video_icn"/>
+                            <TextView
+                                android:id="@+id/txtImageCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Images"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtVideoCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Videos"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="120dp"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/item_card_bg">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="120dp"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/item_card_bg">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/video_icn"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/audio_icn"/>
+                            <TextView
+                                android:id="@+id/txtVideoCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Videos"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtAudioCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Audios"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="120dp"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/item_card_bg">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="120dp"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/item_card_bg">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/audio_icn"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/other_icn"/>
+                            <TextView
+                                android:id="@+id/txtAudioCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Audios"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtOtherCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Others"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:layout_columnSpan="2"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/item_card_bg">
 
-                </GridLayout>
-            </LinearLayout>
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/other_icn"/>
+
+                            <TextView
+                                android:id="@+id/txtOtherCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Others"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                    </GridLayout>
+
+                    <!-- PIE CHART -->
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginTop="24dp"/>
+
+                    <TextView
+                        android:id="@+id/txtPieUsage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="0 B / 0 B"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
 
             <!-- MY FILES -->
             <LinearLayout

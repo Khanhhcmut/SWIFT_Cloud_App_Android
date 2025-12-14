@@ -15,6 +15,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -34,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -60,6 +62,12 @@ import okio.BufferedSink;
 
 import androidx.documentfile.provider.DocumentFile;
 import android.util.Pair;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -104,8 +112,10 @@ public class HomeActivity extends AppCompatActivity {
     TextView txtVideoCount;
     TextView txtAudioCount;
     TextView txtOtherCount;
-
-    LinearLayout layoutDashboard, layoutMyFiles, layoutBackup;
+    View layoutDashboard;
+    LinearLayout layoutMyFiles, layoutBackup;
+    PieChart pieChart;
+    TextView txtPieUsage;
 
 
     @Override
@@ -117,12 +127,13 @@ public class HomeActivity extends AppCompatActivity {
         layoutMyFiles = findViewById(R.id.layoutMyFiles);
         layoutBackup = findViewById(R.id.layoutBackup);
 
-
         txtDocCount = findViewById(R.id.txtDocCount);
         txtImageCount = findViewById(R.id.txtImageCount);
         txtVideoCount = findViewById(R.id.txtVideoCount);
         txtAudioCount = findViewById(R.id.txtAudioCount);
         txtOtherCount = findViewById(R.id.txtOtherCount);
+        pieChart = findViewById(R.id.pieChart);
+        txtPieUsage = findViewById(R.id.txtPieUsage);
 
         txtStorageUsage = findViewById(R.id.txtStorageUsage);
         progressStorage = findViewById(R.id.progressStorage);
@@ -733,7 +744,7 @@ public class HomeActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 loadFolders();
                 if (currentSelectedFolder != null) loadFiles(currentSelectedFolder);
-                Toast.makeText(this, "Delete complete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Delete completed", Toast.LENGTH_SHORT).show();
                 loadCloudQuotaFromConfig();
                 doRefresh(false);
             });
@@ -822,7 +833,7 @@ public class HomeActivity extends AppCompatActivity {
                     lastValidSelection = userSpinner.getSelectedItemPosition();
                     refreshUserSpinnerInNav();
 
-                    loadFolders();
+                    doRefresh(false);
                     loadCloudQuotaFromConfig();
                     Toast.makeText(HomeActivity.this, "Switched to " + username, Toast.LENGTH_SHORT).show();
                 });
@@ -976,35 +987,42 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadAllFilesOfFolderForSearchOnly(String containerName) {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
+        try {
+            OkHttpClient client = new OkHttpClient();
 
-                String url = storageUrl + "/" + containerName + "?format=json";
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("X-Auth-Token", token)
-                        .get()
-                        .build();
+            String url = storageUrl + "/" + containerName + "?format=json";
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("X-Auth-Token", token)
+                    .get()
+                    .build();
 
-                Response response = client.newCall(request).execute();
+            Response response = client.newCall(request).execute();
 
-                if (response.isSuccessful()) {
-                    String json = response.body().string();
-                    JSONArray arr = new JSONArray(json);
+            if (response.isSuccessful()) {
+                String json = response.body().string();
+                JSONArray arr = new JSONArray(json);
 
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject obj = arr.getJSONObject(i);
-                        String name = obj.getString("name");
-                        long size = obj.getLong("bytes");
-                        String last = obj.optString("last_modified", "");
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    String name = obj.getString("name");
+                    long size = obj.getLong("bytes");
+                    String last = obj.optString("last_modified", "");
 
+                    boolean exists = false;
+                    for (FileAdapter.FileItem f : allFiles) {
+                        if (f.folder.equals(containerName) && f.name.equals(name)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
                         allFiles.add(new FileAdapter.FileItem(name, size, containerName, last));
                     }
                 }
+            }
 
-            } catch (Exception ignored) {}
-        }).start();
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -1505,7 +1523,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                Toast.makeText(this, "Download complete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Download completed", Toast.LENGTH_SHORT).show();
             });
 
         }).start();
@@ -1771,43 +1789,106 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateDashboardStats() {
-        int docs = 0, images = 0, videos = 0, audios = 0, others = 0;
+
+        int cntDocs = 0, cntImages = 0, cntVideos = 0, cntAudios = 0, cntOthers = 0;
+        long sizeDocs = 0, sizeImages = 0, sizeVideos = 0, sizeAudios = 0, sizeOthers = 0;
+        long totalSize = 0;
 
         for (FileAdapter.FileItem f : allFiles) {
             String n = f.name.toLowerCase();
+            long s = f.size;
+            totalSize += s;
 
             if (n.endsWith(".pdf") || n.endsWith(".doc") || n.endsWith(".docx")
                     || n.endsWith(".xls") || n.endsWith(".xlsx")
                     || n.endsWith(".ppt") || n.endsWith(".pptx")
                     || n.endsWith(".txt")) {
-                docs++;
+                cntDocs++;
+                sizeDocs += s;
+
             } else if (n.endsWith(".jpg") || n.endsWith(".png")
                     || n.endsWith(".jpeg") || n.endsWith(".gif")) {
-                images++;
+                cntImages++;
+                sizeImages += s;
+
             } else if (n.endsWith(".mp4") || n.endsWith(".mkv")
                     || n.endsWith(".avi")) {
-                videos++;
+                cntVideos++;
+                sizeVideos += s;
+
             } else if (n.endsWith(".mp3") || n.endsWith(".wav")) {
-                audios++;
+                cntAudios++;
+                sizeAudios += s;
+
             } else {
-                others++;
+                cntOthers++;
+                sizeOthers += s;
             }
         }
 
-        final int fDocs = docs;
-        final int fImages = images;
-        final int fVideos = videos;
-        final int fAudios = audios;
-        final int fOthers = others;
+        final int fDocs = cntDocs;
+        final int fImages = cntImages;
+        final int fVideos = cntVideos;
+        final int fAudios = cntAudios;
+        final int fOthers = cntOthers;
+
+        final long fSizeDocs = sizeDocs;
+        final long fSizeImages = sizeImages;
+        final long fSizeVideos = sizeVideos;
+        final long fSizeAudios = sizeAudios;
+        final long fSizeOthers = sizeOthers;
+        final long fTotalSize = totalSize;
 
         runOnUiThread(() -> {
+
+            // TEXT COUNTS
             txtDocCount.setText("Documents: " + fDocs);
             txtImageCount.setText("Images: " + fImages);
             txtVideoCount.setText("Videos: " + fVideos);
             txtAudioCount.setText("Audios: " + fAudios);
             txtOtherCount.setText("Others: " + fOthers);
+
+            // PIE CHART (BY SIZE)
+            if (pieChart != null) {
+                List<PieEntry> entries = new ArrayList<>();
+
+                if (fSizeDocs > 0) entries.add(new PieEntry(fSizeDocs, "Documents"));
+                if (fSizeImages > 0) entries.add(new PieEntry(fSizeImages, "Images"));
+                if (fSizeVideos > 0) entries.add(new PieEntry(fSizeVideos, "Videos"));
+                if (fSizeAudios > 0) entries.add(new PieEntry(fSizeAudios, "Audios"));
+                if (fSizeOthers > 0) entries.add(new PieEntry(fSizeOthers, "Others"));
+
+                PieDataSet dataSet = new PieDataSet(entries, "");
+                dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+                dataSet.setSliceSpace(2f);
+                dataSet.setValueTextSize(12f);
+                dataSet.setValueTextColor(Color.WHITE);
+
+                PieData data = new PieData(dataSet);
+                data.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return String.format("%.1f%%", value);
+                    }
+                });
+
+                pieChart.setUsePercentValues(true);
+                pieChart.setDrawEntryLabels(true);
+                pieChart.setEntryLabelColor(Color.BLACK);
+                pieChart.setEntryLabelTextSize(12f);
+                pieChart.setData(data);
+                pieChart.getDescription().setEnabled(false);
+                pieChart.getLegend().setEnabled(true);
+                pieChart.animateY(800);
+                pieChart.invalidate();
+            }
+
+            txtPieUsage.setText(
+                    formatSize(fTotalSize) + " / " + formatSize(totalQuotaBytes)
+            );
         });
     }
+
 
     private void showPage(View page) {
         View[] pages = {layoutDashboard, layoutMyFiles, layoutBackup};

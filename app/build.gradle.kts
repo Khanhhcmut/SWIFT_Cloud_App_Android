@@ -37,6 +37,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("com.squareup.okio:okio:3.16.4")
     implementation("com.google.android.material:material:1.11.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
