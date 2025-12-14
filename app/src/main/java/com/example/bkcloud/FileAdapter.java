@@ -28,6 +28,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     Set<String> selectedSet = new HashSet<>();
     FileListener listener;
 
+
     public static class FileItem {
         public String name;
         public long size;
@@ -52,6 +53,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         TextView txtFileName, txtFileSize;
         ImageView deleteIcon;
         ImageView checkIcon;
+        TextView txtIndex;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +61,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
             txtFileSize = itemView.findViewById(R.id.txtFileSize);
             deleteIcon = itemView.findViewById(R.id.deleteIcon);
             checkIcon = itemView.findViewById(R.id.checkIcon);
+            txtIndex = itemView.findViewById(R.id.txtIndex);
         }
     }
 
@@ -78,6 +81,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FileAdapter.ViewHolder holder, int position) {
+
+        holder.txtIndex.setText(String.valueOf(position + 1));
         FileItem file = files.get(position);
         holder.txtFileName.setText(file.name);
         String key = file.folder + "/" + file.name;

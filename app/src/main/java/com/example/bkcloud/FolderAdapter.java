@@ -48,12 +48,13 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         TextView txtFolderName;
         ImageView deleteIcon;
         ImageView checkIcon;
-
+        TextView txtIndex;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtFolderName = itemView.findViewById(R.id.txtFolderName);
             deleteIcon = itemView.findViewById(R.id.deleteIcon);
             checkIcon = itemView.findViewById(R.id.checkIcon);
+            txtIndex = itemView.findViewById(R.id.txtIndex);
         }
     }
 
@@ -76,6 +77,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
     public void onBindViewHolder(@NonNull FolderAdapter.ViewHolder holder, int position) {
         FolderItem item = folders.get(position);
         String key = item.name;
+        holder.txtIndex.setText(String.valueOf(position + 1));
 
         holder.txtFolderName.setText(
                 item.name + "  (" + formatSize(item.size) + ")"
