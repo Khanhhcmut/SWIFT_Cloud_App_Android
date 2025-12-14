@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- MAIN CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <!-- TOP TOOLBAR -->
+        <!-- TOOLBAR -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -19,388 +19,393 @@
             android:background="?attr/colorPrimary"
             app:titleTextColor="@android:color/white" />
 
-        <LinearLayout
-            android:id="@+id/layoutDashboard"
+        <!-- CONTENT CONTAINER -->
+        <FrameLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:visibility="gone">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dashboard"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
-
-            <GridLayout
-                android:id="@+id/dashboardGrid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:rowCount="3"
-                android:useDefaultMargins="true">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="120dp"
-                    android:layout_columnWeight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/item_card_bg">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/docs_icn"/>
-
-                    <TextView
-                        android:id="@+id/txtDocCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Documents"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="120dp"
-                    android:layout_columnWeight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/item_card_bg">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/image_icn"/>
-
-                    <TextView
-                        android:id="@+id/txtImageCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Images"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="120dp"
-                    android:layout_columnWeight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/item_card_bg">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/video_icn"/>
-
-                    <TextView
-                        android:id="@+id/txtVideoCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Videos"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="120dp"
-                    android:layout_columnWeight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/item_card_bg">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/audio_icn"/>
-
-                    <TextView
-                        android:id="@+id/txtAudioCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Audios"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="120dp"
-                    android:layout_columnWeight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/item_card_bg">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/other_icn"/>
-
-                    <TextView
-                        android:id="@+id/txtOtherCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Others"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-            </GridLayout>
-
-        </LinearLayout>
-
-        <!-- CONTENT AREA WITH FOLDER + FILE LIST -->
-        <LinearLayout
-            android:id="@+id/layoutMyFiles"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="12dp">
-
-            <EditText
-                android:id="@+id/edtSearchAll"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Search all files..."
-                android:inputType="text"
-                android:background="@drawable/loginbox"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:layout_marginBottom="8dp"
-                android:drawableEnd="@drawable/close_icn"
-                android:drawablePadding="8dp" />
-
-            <!-- Storage usage bar -->
+            <!-- DASHBOARD -->
             <LinearLayout
-                android:id="@+id/layoutUsage"
+                android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
-
-                <ProgressBar
-                    android:id="@+id/progressStorage"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="8dp"
-                    android:layout_weight="1"
-                    android:progress="0"
-                    android:max="100"
-                    android:layout_marginEnd="8dp"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/txtStorageUsage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="110dp"
-                    android:text="0 B / 0 B"
-                    android:textSize="13sp"
+                    android:text="Dashboard"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:gravity="end"/>
-            </LinearLayout>
+                    android:layout_marginBottom="16dp"/>
 
-
-            <!-- Folder label -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp">
-
-                <TextView
-                    android:id="@+id/lblFolders"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Folders"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/btnSortFolders"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/sort_icn"
-                    android:padding="4dp"/>
-            </RelativeLayout>
-
-            <!-- Folder list -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerFolders"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:background="@drawable/item_card_bg"
-                android:padding="6dp"/>
-
-            <!-- File label -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="6dp">
-
-                <TextView
-                    android:id="@+id/lblFiles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Files"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/btnSortFiles"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/sort_icn"
-                    android:padding="4dp"/>
-            </RelativeLayout>
-
-            <!-- File list -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerFiles"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_card_bg"
-                android:padding="6dp"/>
-
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp">
-
-                <com.google.android.material.bottomappbar.BottomAppBar
-                    android:id="@+id/bottomAppBar"
+                <GridLayout
+                    android:id="@+id/dashboardGrid"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_gravity="bottom"
-                    android:backgroundTint="#F4F4F4"
-                    app:fabCradleMargin="12dp"
-                    app:fabCradleRoundedCornerRadius="28dp"
-                    app:fabCradleVerticalOffset="10dp"
-                    app:contentInsetStart="0dp"
-                    app:contentInsetEnd="0dp">
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowCount="3"
+                    android:useDefaultMargins="true">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        android:layout_width="0dp"
+                        android:layout_height="120dp"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/item_card_bg">
 
-                        <!-- DASHBOARD -->
-                        <LinearLayout
-                            android:id="@+id/btnDashboard"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/docs_icn"/>
 
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/dashboard_icn"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Dashboard"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-
-                        <!-- MY FILES -->
-                        <LinearLayout
-                            android:id="@+id/btnMyFiles"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/myfile_icn"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="My Files"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="80dp"
-                            android:layout_height="1dp"/>
-
-                        <!-- REFRESH -->
-                        <LinearLayout
-                            android:id="@+id/btnRefresh"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/refresh_icn"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Refresh"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-
-
-                        <!-- BACKUP -->
-                        <LinearLayout
-                            android:id="@+id/btnBackup"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/backup_icn"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Backup"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-
+                        <TextView
+                            android:id="@+id/txtDocCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Documents"
+                            android:textStyle="bold"/>
                     </LinearLayout>
 
-                </com.google.android.material.bottomappbar.BottomAppBar>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="120dp"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/item_card_bg">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fabCenter"
-                    android:contentDescription="Add"
-                    android:layout_width="57dp"
-                    android:layout_height="57dp"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="20dp"
-                    android:backgroundTint="#2196F3"
-                    android:src="@drawable/add_icn"
-                    app:elevation="12dp"/>
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/image_icn"/>
 
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                        <TextView
+                            android:id="@+id/txtImageCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Images"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
 
-        </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="120dp"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/item_card_bg">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/video_icn"/>
+
+                        <TextView
+                            android:id="@+id/txtVideoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Videos"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="120dp"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/item_card_bg">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/audio_icn"/>
+
+                        <TextView
+                            android:id="@+id/txtAudioCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Audios"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="120dp"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/item_card_bg">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/other_icn"/>
+
+                        <TextView
+                            android:id="@+id/txtOtherCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Others"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                </GridLayout>
+            </LinearLayout>
+
+            <!-- MY FILES -->
+            <LinearLayout
+                android:id="@+id/layoutMyFiles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:visibility="visible">
+
+                <EditText
+                    android:id="@+id/edtSearchAll"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Search all files..."
+                    android:inputType="text"
+                    android:background="@drawable/loginbox"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginBottom="8dp"
+                    android:drawableEnd="@drawable/close_icn"
+                    android:drawablePadding="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutUsage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <ProgressBar
+                        android:id="@+id/progressStorage"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="8dp"
+                        android:layout_weight="1"
+                        android:progress="0"
+                        android:max="100"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:id="@+id/txtStorageUsage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="110dp"
+                        android:text="0 B / 0 B"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:id="@+id/lblFolders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Folders"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/btnSortFolders"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/sort_icn"
+                        android:padding="4dp"/>
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerFolders"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@drawable/item_card_bg"
+                    android:padding="6dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:id="@+id/lblFiles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Files"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/btnSortFiles"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/sort_icn"
+                        android:padding="4dp"/>
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerFiles"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_card_bg"
+                    android:padding="6dp"/>
+            </LinearLayout>
+
+            <!-- BACKUP (BLANK) -->
+            <LinearLayout
+                android:id="@+id/layoutBackup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <!-- BOTTOM BAR + FAB -->
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bottomAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_gravity="bottom"
+                android:backgroundTint="#F4F4F4"
+                app:fabCradleMargin="12dp"
+                app:fabCradleRoundedCornerRadius="28dp"
+                app:fabCradleVerticalOffset="10dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetEnd="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:id="@+id/btnDashboard"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/dashboard_icn"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dashboard"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btnMyFiles"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/myfile_icn"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Files"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="80dp"
+                        android:layout_height="1dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/btnRefresh"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/refresh_icn"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Refresh"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btnBackup"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/backup_icn"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Backup"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.bottomappbar.BottomAppBar>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabCenter"
+                android:contentDescription="Add"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="#2196F3"
+                android:src="@drawable/add_icn"
+                app:elevation="12dp"/>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </LinearLayout>
 
-    <!-- NAVIGATION DRAWER -->
+    <!-- NAV DRAWER -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
         android:layout_width="wrap_content"

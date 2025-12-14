@@ -105,14 +105,18 @@ public class HomeActivity extends AppCompatActivity {
     TextView txtAudioCount;
     TextView txtOtherCount;
 
+    LinearLayout layoutDashboard, layoutMyFiles, layoutBackup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        LinearLayout layoutDashboard = findViewById(R.id.layoutDashboard);
-        LinearLayout layoutMyFiles = findViewById(R.id.layoutMyFiles);
+        layoutDashboard = findViewById(R.id.layoutDashboard);
+        layoutMyFiles = findViewById(R.id.layoutMyFiles);
+        layoutBackup = findViewById(R.id.layoutBackup);
+
 
         txtDocCount = findViewById(R.id.txtDocCount);
         txtImageCount = findViewById(R.id.txtImageCount);
@@ -257,17 +261,13 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             else if (id == R.id.nav_myfile) {
-                layoutDashboard.setVisibility(View.GONE);
-                layoutMyFilesContent.setVisibility(View.VISIBLE);
+                showPage(layoutMyFiles);
             }
             else if (id == R.id.nav_dashboard) {
-                layoutDashboard.setVisibility(View.VISIBLE);
-                layoutMyFilesContent.setVisibility(View.GONE);
-
-                recyclerFolders.postDelayed(this::updateDashboardStats, 300);
+                showPage(layoutDashboard);
             }
             else if (id == R.id.nav_backup) {
-                Toast.makeText(this, "Backup", Toast.LENGTH_SHORT).show();
+                showPage(layoutBackup);
             }
 
             drawerLayout.closeDrawers();
@@ -353,15 +353,11 @@ public class HomeActivity extends AppCompatActivity {
         FloatingActionButton fabCenter = findViewById(R.id.fabCenter);
 
         btnDashboard.setOnClickListener(v -> {
-            layoutDashboard.setVisibility(View.VISIBLE);
-            layoutMyFiles.setVisibility(View.GONE);
-
-            recyclerFolders.postDelayed(this::updateDashboardStats, 300);
+            showPage(layoutDashboard);
         });
 
         findViewById(R.id.btnMyFiles).setOnClickListener(v -> {
-            layoutDashboard.setVisibility(View.GONE);
-            layoutMyFiles.setVisibility(View.VISIBLE);
+            showPage(layoutMyFiles);
         });
 
         fabCenter.setOnClickListener(v -> {
@@ -423,11 +419,10 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         btnBackup.setOnClickListener(v -> {
-            Toast.makeText(this, "Open Backup", Toast.LENGTH_SHORT).show();
+            showPage(layoutBackup);
         });
 
         loadCloudQuotaFromConfig();
-
     }
 
     @Override
@@ -1814,6 +1809,37 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void showPage(View page) {
+        View[] pages = {layoutDashboard, layoutMyFiles, layoutBackup};
+
+        for (View v : pages) {
+            if (v.getVisibility() == View.VISIBLE) {
+                v.animate()
+                        .alpha(0f)
+                        .translationX(-40f)
+                        .setDuration(150)
+                        .withEndAction(() -> {
+                            v.setVisibility(View.GONE);
+                            v.setAlpha(1f);
+                            v.setTranslationX(0f);
+                        })
+                        .start();
+            }
+        }
+
+        page.setAlpha(0f);
+        page.setTranslationX(40f);
+        page.setVisibility(View.VISIBLE);
+        page.animate()
+                .alpha(1f)
+                .translationX(0f)
+                .setDuration(200)
+                .start();
+
+        if (page == layoutDashboard) {
+            recyclerFolders.postDelayed(this::updateDashboardStats, 300);
+        }
+    }
 
 }
 
