@@ -54,6 +54,9 @@ public class BackupManager {
         }
         @Override
         public Result doWork() {
+            if (!BackupManager.isEnabled(getApplicationContext())) {
+                return Result.success();
+            }
             int type = getInputData().getInt("type", 0);
             BackupManager.showNotification(getApplicationContext(), type);
             return Result.success();
@@ -66,9 +69,13 @@ public class BackupManager {
         }
         @Override
         public Result doWork() {
+            if (!BackupManager.isEnabled(getApplicationContext())) {
+                return Result.success();
+            }
             BackupManager.showNotification(getApplicationContext(), 0);
             return Result.success();
         }
+
     }
 
     private static String buildTimeFolder() {
@@ -83,6 +90,7 @@ public class BackupManager {
 
     public static void clear(Context c) {
         prefs(c).edit().clear().apply();
+        WorkManager.getInstance(c).cancelAllWorkByTag("backup");
     }
 
     public static boolean isEnabled(Context c) {
@@ -535,7 +543,5 @@ public class BackupManager {
             Log.e("BACKUP", "Upload error", e);
         }
     }
-
-
 
 }
