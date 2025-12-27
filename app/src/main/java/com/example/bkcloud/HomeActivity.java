@@ -74,7 +74,6 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TimePicker;
